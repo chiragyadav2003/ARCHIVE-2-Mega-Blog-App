@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 // ** if authentication is false then we will redirect to login page
 // ** if authentication is true then we will display the component
 
-function Protected({children, authentication = true}) {
+function AuthLayout({children, authentication = true}) {
 
     const navigate = useNavigate()
 
@@ -30,4 +30,4 @@ function Protected({children, authentication = true}) {
   
 }
 
-export default Protected
+export default AuthLayout
