@@ -1,7 +1,7 @@
 import envData from "../env-variable/env-variable";
 import { Client, ID, Databases, Storage, Query } from "appwrite";
 
-class Service{
+export class Service{
 
     client = new Client();
     databases;
@@ -9,8 +9,8 @@ class Service{
 
     constructor(){
         this.client
-            .setEndpoint(envData.appwriteURL)
-            .setProject(envData.appwriteProjectID);
+            .setEndpoint(envData.appwriteUrl)
+            .setProject(envData.appwriteProjectId);
 
         this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
@@ -20,14 +20,14 @@ class Service{
     async createPost({title, slug, content, featuredImage, status, userID}){
         try {
             return await this.databases.createDocument(
-                envData.appwriteDatabaseID,
-                envData.appwriteCollectionID,
+                envData.appwriteDatabaseId,
+                envData.appwriteCollectionId,
                 slug,
                 {
                     title,content,featuredImage,status,userID
                 }
-            );
-            } catch (error) {
+            )
+        } catch (error) {
                 console.log("Appwrite service :: createPost :: error :: ", error);
         }
     }
@@ -37,8 +37,8 @@ class Service{
     async updatePost(slug, { title, content, featuredImage, status}){
         try {
             return await this.databases.updateDocument(
-                envData.appwriteDatabaseID,
-                envData.appwriteCollectionID,
+                envData.appwriteDatabaseId,
+                envData.appwriteCollectionId,
                 slug,
                 {
                     title, content, featuredImage, status
@@ -52,8 +52,8 @@ class Service{
     async deletePost(slug){
         try {
             await this.databases.deleteDocument(
-                envData.appwriteDatabaseID,
-                envData.appwriteCollectionID,
+                envData.appwriteDatabaseId,
+                envData.appwriteCollectionId,
                 slug
             );
             return true;
@@ -66,8 +66,8 @@ class Service{
     async getPost(slug){
         try {
             return await this.databases.getDocument(
-                envData.appwriteDatabaseID,
-                envData.appwriteCollectionID,
+                envData.appwriteDatabaseId,
+                envData.appwriteCollectionId,
                 slug
             );
         } catch (error) {
@@ -77,32 +77,16 @@ class Service{
 
     //we will try to access only those documents whose status is active
     //for queries indexing is required which we have created in database already
-    async getAllPosts(queries = [Query.equal("status", "active")]){
-        try {
-            return await this.databases.listDocuments(
-                envData.appwriteDatabaseID,
-                envData.appwriteCollectionID,
-                queries,
-                //passing queries here, we can also pass queries manually here by writing them here
-                // [
-                //     Query.equal("status", "active")
-                // ]
-            );
-        } catch (error) {
-            console.log("Appwrite service :: getAllPosts :: error :: ", error);
-            return false;
-        }
-    }
-
-    //**  m-2 of passing queries
-    // async getAllPosts(){
+    // async getAllPosts(queries = [Query.equal("status", "active")]){
     //     try {
     //         return await this.databases.listDocuments(
-    //             envData.appwriteDatabaseID,
-    //             envData.appwriteCollectionID,
-    //             [
-    //                 Query.equal("status", "active")
-    //             ]
+    //             envData.appwriteDatabaseId,
+    //             envData.appwriteCollectionId,
+    //             queries,
+    //             //passing queries here, we can also pass queries manually here by writing them here
+    //             // [
+    //             //     Query.equal("status", "active")
+    //             // ]
     //         );
     //     } catch (error) {
     //         console.log("Appwrite service :: getAllPosts :: error :: ", error);
@@ -110,17 +94,33 @@ class Service{
     //     }
     // }
 
+    //**  m-2 of passing queries
+    async getAllPosts(){
+        try {
+            return await this.databases.listDocuments(
+                envData.appwriteDatabaseId,
+                envData.appwriteCollectionId,
+                [
+                    Query.equal("status", "active")
+                ]
+            );
+        } catch (error) {
+            console.log("Appwrite service :: getAllPosts :: error :: ", error);
+            return false;
+        }
+    }
+
 
 
     // ** file upload services
 
     async uploadFile(file){
         try {
-            await this.bucket.createFile(
-                envData.appwriteBucketID,
-                file
-                )
-            return true;
+            return await this.bucket.createFile(
+                    envData.appwriteBucketId,
+                    ID.unique(),
+                    file
+                    )
         } catch (error) {
             console.log("Appwrite service :: uploadFile :: error :: ", error);
             return false;
@@ -131,7 +131,7 @@ class Service{
     async deleteFile(fileID){
         try {
             await this.bucket.deleteFile(
-                envData.appwriteBucketID,
+                envData.appwriteBucketId,
                 fileID
             );
             return true;
@@ -144,7 +144,7 @@ class Service{
     async getFilePreview(fileID){
         try {
             return await this.bucket.getFilePreview(
-                envData.appwriteBucketID,
+                envData.appwriteBucketId,
                 fileID
             );
         } catch (error) {

@@ -16,37 +16,31 @@ function Login() {
 
   const [error,setError] = useState("")
 
-  const login = async(data) =>{
-    setError("")
-    try {
-      const session = await authService.login(data.email,data.password)
-      if(session){
-          const userData = await authService.getCurrentUser()
-          if(userData){
-            dispatch(authLogin(userData))
-          }
-          navigate("/")
-      }
-    } catch (error) {
-      setError(error.message)
+  const login = async(data) => {
+        setError("")
+        try {
+            const session = await authService.login(data)
+            if (session) {
+                const userData = await authService.getCurrentUser()
+                if(userData) dispatch(authLogin(userData));
+                navigate("/")
+            }
+        } catch (error) {
+            setError(error.message)
+        }
     }
-
-  }
 
   return (
     <div
     className='flex items-center justify-center w-full'
     >
         <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
-          {/* adding logo */}
         <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
                         <Logo width="100%" />
                     </span>
         </div>
         <h2 className="text-center text-2xl font-bold leading-tight">Sign in to your account</h2>
-
-        {/* if user do not have any account, then using signup btn they can go to signup page */}
         <p className="mt-2 text-center text-base text-black/60">
                     Don&apos;t have any account?&nbsp;
                     <Link
@@ -56,15 +50,9 @@ function Login() {
                         Sign Up
                     </Link>
         </p>
-
-        {/* if there is any error, then show it here */}
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-
-        {/* form begins here */}
-        {/* whenever we submit rreact hook form, handleSubmit is called */}
         <form onSubmit={handleSubmit(login)} className='mt-8'>
             <div className='space-y-5'>
-
                 <Input
                 label="Email: "
                 placeholder="Enter your email"
@@ -77,7 +65,6 @@ function Login() {
                     }
                 })}
                 />
-
                 <Input
                 label="Password: "
                 type="password"
@@ -86,15 +73,12 @@ function Login() {
                     required: true,
                 })}
                 />
-
                 <Button
                 type="submit"
                 className="w-full"
                 >Sign in</Button>
-
             </div>
         </form>
-        
         </div>
     </div>
   )
